@@ -1,0 +1,162 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h3 class="mb-0">User Registration</h3>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label for="fullName" class="form-label">Full Name</label>
+              <input
+                type="text"
+                id="fullName"
+                class="form-control"
+                [class.is-valid]="registrationForm.get('fullName')?.valid && registrationForm.get('fullName')?.touched"
+                [class.is-invalid]="registrationForm.get('fullName')?.invalid && registrationForm.get('fullName')?.touched"
+                formControlName="fullName"
+              />
+              @if (registrationForm.get('fullName')?.invalid && registrationForm.get('fullName')?.touched) {
+                <div class="invalid-feedback">
+                  @if (registrationForm.get('fullName')?.errors?.['required']) {
+                    <span>Full Name is required.</span>
+                  }
+                  @if (registrationForm.get('fullName')?.errors?.['minlength']) {
+                    <span>Full Name must be at least 5 characters.</span>
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input
+                type="email"
+                id="email"
+                class="form-control"
+                [class.is-valid]="registrationForm.get('email')?.valid && registrationForm.get('email')?.touched"
+                [class.is-invalid]="registrationForm.get('email')?.invalid && registrationForm.get('email')?.touched"
+                formControlName="email"
+              />
+              @if (registrationForm.get('email')?.invalid && registrationForm.get('email')?.touched) {
+                <div class="invalid-feedback">
+                  @if (registrationForm.get('email')?.errors?.['required']) {
+                    <span>Email is required.</span>
+                  }
+                  @if (registrationForm.get('email')?.errors?.['email']) {
+                    <span>Please enter a valid email address.</span>
+                  }
+                  @if (registrationForm.get('email')?.errors?.['pattern']) {
+                    <span>Email format is invalid.</span>
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Mobile Number(s)</label>
+              @for (mobile of mobiles.controls; track $index) {
+                <div class="input-group mb-2">
+                  <input
+                    type="text"
+                    class="form-control"
+                    [class.is-valid]="mobile.valid && mobile.touched"
+                    [class.is-invalid]="mobile.invalid && mobile.touched"
+                    [formControl]="getMobileControl($index)"
+                    placeholder="01XXXXXXXXX"
+                  />
+                  @if ($index > 0) {
+                    <button type="button" class="btn btn-outline-danger" (click)="removeMobile($index)">Remove</button>
+                  }
+                  @if (mobile.invalid && mobile.touched) {
+                    <div class="invalid-feedback">
+                      @if (mobile.errors?.['required']) {
+                        <span>Mobile number is required.</span>
+                      }
+                      @if (mobile.errors?.['pattern']) {
+                        <span>Mobile number must be 11 digits starting with 01.</span>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+              <button type="button" class="btn btn-sm btn-outline-secondary" (click)="addMobile()">+ Add another mobile</button>
+            </div>
+
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input
+                type="password"
+                id="password"
+                class="form-control"
+                [class.is-valid]="registrationForm.get('password')?.valid && registrationForm.get('password')?.touched"
+                [class.is-invalid]="registrationForm.get('password')?.invalid && registrationForm.get('password')?.touched"
+                formControlName="password"
+              />
+              @if (registrationForm.get('password')?.invalid && registrationForm.get('password')?.touched) {
+                <div class="invalid-feedback">
+                  @if (registrationForm.get('password')?.errors?.['required']) {
+                    <span>Password is required.</span>
+                  }
+                  @if (registrationForm.get('password')?.errors?.['minlength']) {
+                    <span>Password must be at least 6 characters.</span>
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="mb-3">
+              <label for="confirmPassword" class="form-label">Confirm Password</label>
+              <input
+                type="password"
+                id="confirmPassword"
+                class="form-control"
+                [class.is-valid]="registrationForm.get('confirmPassword')?.valid && registrationForm.get('confirmPassword')?.touched"
+                [class.is-invalid]="(registrationForm.get('confirmPassword')?.invalid && registrationForm.get('confirmPassword')?.touched) || (registrationForm.errors?.['mismatch'] && registrationForm.get('confirmPassword')?.touched)"
+                formControlName="confirmPassword"
+              />
+              @if ((registrationForm.get('confirmPassword')?.invalid && registrationForm.get('confirmPassword')?.touched) || (registrationForm.errors?.['mismatch'] && registrationForm.get('confirmPassword')?.touched)) {
+                <div class="invalid-feedback">
+                  @if (registrationForm.get('confirmPassword')?.errors?.['required']) {
+                    <span>Confirm Password is required.</span>
+                  }
+                  @if (registrationForm.errors?.['mismatch']) {
+                    <span>Passwords do not match.</span>
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="d-flex justify-content-between">
+              <button type="button" class="btn btn-warning" (click)="resetForm()">Reset</button>
+              <button type="submit" class="btn btn-primary" [disabled]="registrationForm.invalid">Register</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @if (submittedData) {
+    <div class="row justify-content-center mt-4">
+      <div class="col-md-6">
+        <div class="card border-success">
+          <div class="card-header bg-success text-white">
+            <h4 class="mb-0">Registration Successful</h4>
+          </div>
+          <div class="card-body">
+            <p><strong>Full Name:</strong> {{ submittedData.fullName }}</p>
+            <p><strong>Email:</strong> {{ submittedData.email }}</p>
+            <p><strong>Mobile(s):</strong></p>
+            <ul>
+              @for (mobile of submittedData.mobiles; track $index) {
+                <li>{{ mobile }}</li>
+              }
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

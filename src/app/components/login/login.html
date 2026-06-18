@@ -1,0 +1,79 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header bg-info text-white">
+          <h3 class="mb-0">User Login</h3>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input
+                type="email"
+                id="email"
+                class="form-control"
+                [class.is-valid]="loginForm.get('email')?.valid && loginForm.get('email')?.touched"
+                [class.is-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+                formControlName="email"
+              />
+              @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+                <div class="invalid-feedback">
+                  @if (loginForm.get('email')?.errors?.['required']) {
+                    <span>Email is required.</span>
+                  }
+                  @if (loginForm.get('email')?.errors?.['email']) {
+                    <span>Please enter a valid email address.</span>
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input
+                type="password"
+                id="password"
+                class="form-control"
+                [class.is-valid]="loginForm.get('password')?.valid && loginForm.get('password')?.touched"
+                [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+                formControlName="password"
+              />
+              @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+                <div class="invalid-feedback">
+                  @if (loginForm.get('password')?.errors?.['required']) {
+                    <span>Password is required.</span>
+                  }
+                  @if (loginForm.get('password')?.errors?.['minlength']) {
+                    <span>Password must be at least 6 characters.</span>
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="d-flex justify-content-between">
+              <button type="button" class="btn btn-warning" (click)="resetForm()">Reset</button>
+              <button type="submit" class="btn btn-info" [disabled]="loginForm.invalid">Login</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @if (submittedData) {
+    <div class="row justify-content-center mt-4">
+      <div class="col-md-6">
+        <div class="card border-success">
+          <div class="card-header bg-success text-white">
+            <h4 class="mb-0">Login Successful</h4>
+          </div>
+          <div class="card-body">
+            <p><strong>Email:</strong> {{ submittedData.email }}</p>
+            <p><strong>Password:</strong> {{ submittedData.password }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
